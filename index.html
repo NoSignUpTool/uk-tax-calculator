@@ -121,7 +121,7 @@
 
   <div class="qr-share">
     <p><strong>Share this tool:</strong></p>
-    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://no-sign-up.github.io" alt="QR Code">
+    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://nosignuptool.github.io/uk-tax-calculator/" alt="QR Code">
   </div>
 
   <script>
@@ -139,7 +139,6 @@
       const totalIncome = paye + selfProfit;
       const pension = (pensionPct / 100) * paye;
 
-      // Income Tax
       let tax = 0;
       const taxFree = 12570;
       const basicRate = 0.20;
@@ -154,7 +153,6 @@
         }
       }
 
-      // NI Class 1 (PAYE)
       let niClass1 = 0;
       if (paye > 12570) {
         const upperEarningsLimit = 50270;
@@ -165,10 +163,8 @@
         }
       }
 
-      // NI Class 2
       let class2 = selfProfit > 6725 ? 179.40 : 0;
 
-      // NI Class 4
       let class4 = 0;
       if (selfProfit > 12570) {
         const lower = 50270;
