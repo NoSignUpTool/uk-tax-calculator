@@ -45,6 +45,7 @@
       font-size: 1rem;
       border: 1px solid #ccc;
       border-radius: 5px;
+      box-sizing: border-box;
     }
     button {
       background-color: #0070f3;
@@ -75,10 +76,26 @@
     .note a:hover {
       text-decoration: underline;
     }
+    .qr-share {
+      text-align: center;
+      margin-top: 2rem;
+    }
+    .qr-share img {
+      width: 150px;
+      height: auto;
+      margin-top: 0.5rem;
+    }
+    @media (max-width: 600px) {
+      body {
+        padding: 1rem;
+      }
+      .logo {
+        width: 70%;
+      }
+    }
   </style>
 </head>
 <body>
-
   <div class="logo-container">
     <img src="Logo_nosignup.png" alt="No Sign Up Tool logo" class="logo">
   </div>
@@ -102,6 +119,11 @@
 
   <div class="output" id="result" style="display:none;"></div>
 
+  <div class="qr-share">
+    <p><strong>Share this tool:</strong></p>
+    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://no-sign-up.github.io" alt="QR Code">
+  </div>
+
   <script>
     function formatMoney(amount) {
       return amount.toLocaleString('en-UK', { style: 'currency', currency: 'GBP', minimumFractionDigits: 0 });
@@ -115,8 +137,6 @@
 
       const selfProfit = selfIncome - expenses;
       const totalIncome = paye + selfProfit;
-
-      // Pension Contribution
       const pension = (pensionPct / 100) * paye;
 
       // Income Tax
@@ -134,7 +154,7 @@
         }
       }
 
-      // NI Class 1 (for PAYE)
+      // NI Class 1 (PAYE)
       let niClass1 = 0;
       if (paye > 12570) {
         const upperEarningsLimit = 50270;
