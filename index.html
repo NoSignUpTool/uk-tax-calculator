@@ -78,6 +78,7 @@
   </style>
 </head>
 <body>
+
   <div class="logo-container">
     <img src="Logo_nosignup.png" alt="No Sign Up Tool logo" class="logo">
   </div>
@@ -158,6 +159,13 @@
         <strong>Estimated Monthly Income:</strong> ${formatMoney(monthly)}
       `;
     }
+
+    // ENTER key support
+    document.addEventListener("keydown", function(event) {
+      if (event.key === "Enter") {
+        calculateTax();
+      }
+    });
   </script>
 
   <div class="note">
