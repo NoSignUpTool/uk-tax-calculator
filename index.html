@@ -3,177 +3,150 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="description" content="Free UK tax calculator for PAYE & self-employed income. Instantly estimates income tax, Class 2 & Class 4 NI and monthly take-home. No sign-up."/>
-  <title>UK Self-Employed + PAYE Tax Calculator 2025</title>
-  <link rel="icon" href="data:,">
+  <title>UK Tax & NI Estimator 2025</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      padding: 2rem;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+    .container {
       max-width: 600px;
-      margin: auto;
-      background: #f8f8f8;
-      color: #333;
+      margin: 40px auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
     }
     h1 {
-      font-size: 1.8rem;
-      margin-bottom: 1rem;
-      text-align: center;
+      margin-top: 0;
     }
-    .logo-container {
-      text-align: center;
-      margin-bottom: 1rem;
-    }
-    .logo {
-      max-width: 180px;
-      width: 50%;
-      height: auto;
-      animation: bounce 3s infinite ease-in-out;
+    img.logo {
+      width: 90px;
+      animation: bounce 1.5s infinite;
     }
     @keyframes bounce {
-      0%, 100% {
-        transform: translateY(0);
-      }
-      50% {
-        transform: translateY(-10px) scale(1.05);
-      }
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
     }
-    input, button {
+    input {
       width: 100%;
-      padding: 0.6rem;
-      margin: 0.5rem 0;
-      font-size: 1rem;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 4px;
       border: 1px solid #ccc;
-      border-radius: 5px;
+      font-size: 16px;
     }
     button {
-      background-color: #0070f3;
+      padding: 10px 20px;
+      background-color: #007bff;
       color: white;
-      font-weight: bold;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
       cursor: pointer;
     }
     button:hover {
-      background-color: #0058c2;
+      background-color: #0056b3;
     }
-    .output {
-      background: white;
-      padding: 1rem;
-      border-radius: 5px;
-      margin-top: 1rem;
-      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    .result {
+      background: #f9f9f9;
+      margin-top: 20px;
+      padding: 15px;
+      text-align: left;
+      border-radius: 6px;
     }
-    .note {
-      font-size: 0.85rem;
-      margin-top: 1rem;
-      color: #666;
-      line-height: 1.5;
-    }
-    .note a {
-      color: #0070f3;
-      text-decoration: none;
-    }
-    .note a:hover {
-      text-decoration: underline;
+    .disclaimer {
+      font-size: 12px;
+      color: #555;
+      margin-top: 20px;
     }
   </style>
 </head>
 <body>
+  <div class="container">
+    <img src="Logo_nosignup.png" alt="Logo No Sign Up Tool" class="logo" />
+    <h1>UK Tax & NI Estimator 2025</h1>
+    <p>No sign-up. Instant income tax & NI breakdown for PAYE and self-employed income.</p>
 
-  <div class="logo-container">
-    <img src="Logo_nosignup.png" alt="No Sign Up Tool logo" class="logo">
+    <input type="number" id="paye" placeholder="Annual PAYE Salary (£): e.g. 28000" />
+    <input type="number" id="selfIncome" placeholder="Self-Employed Income (£): e.g. 15000" />
+    <input type="number" id="selfExpenses" placeholder="Self-Employed Expenses (£): e.g. 3000" />
+    <input type="number" id="pensionPercent" placeholder="Pension Contribution (%): e.g. 5" />
+    <button onclick="calculateTax()">Calculate</button>
+
+    <div class="result" id="output"></div>
+
+    <div class="disclaimer">
+      ⚠️ This tool provides a simplified estimate of UK tax and NI based on 2025 thresholds.<br>
+      It does not include student loans, pensions (unless entered), or Scottish bands.<br>
+      Sources: 
+      <a href="https://www.gov.uk/income-tax-rates" target="_blank">HMRC Income Tax</a>,
+      <a href="https://www.gov.uk/self-employed-national-insurance-rates" target="_blank">HMRC National Insurance</a>
+    </div>
   </div>
 
-  <h1>UK Tax & NI Estimator 2025</h1>
-  <p>No sign-up. Instant income tax & NI breakdown for PAYE and self-employed income.</p>
-
-  <label>Annual PAYE Salary (£):</label>
-  <input type="number" id="paye" placeholder="e.g. 28000">
-
-  <label>Self-Employed Income (£):</label>
-  <input type="number" id="selfIncome" placeholder="e.g. 15000">
-
-  <label>Self-Employed Expenses (£):</label>
-  <input type="number" id="expenses" placeholder="e.g. 3000">
-
-  <button onclick="calculateTax()">Calculate</button>
-
-  <div class="output" id="result" style="display:none;"></div>
-
   <script>
-    function formatMoney(amount) {
-      return amount.toLocaleString('en-UK', { style: 'currency', currency: 'GBP', minimumFractionDigits: 0 });
-    }
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') calculateTax();
+    });
 
     function calculateTax() {
       const paye = parseFloat(document.getElementById('paye').value) || 0;
       const selfIncome = parseFloat(document.getElementById('selfIncome').value) || 0;
-      const expenses = parseFloat(document.getElementById('expenses').value) || 0;
+      const selfExpenses = parseFloat(document.getElementById('selfExpenses').value) || 0;
+      const pensionPercent = parseFloat(document.getElementById('pensionPercent').value) || 0;
 
-      const selfProfit = selfIncome - expenses;
-      const totalIncome = paye + selfProfit;
+      const personalAllowance = 12570;
+      const taxablePaye = Math.max(paye - personalAllowance, 0);
+      const taxPaye = (taxablePaye <= 50270 - personalAllowance)
+        ? taxablePaye * 0.2
+        : (50270 - personalAllowance) * 0.2 + (taxablePaye - (50270 - personalAllowance)) * 0.4;
 
-      // Income Tax
-      let tax = 0;
-      const taxFree = 12570;
-      const basicRate = 0.20;
-      const higherRate = 0.40;
+      const selfProfit = Math.max(selfIncome - selfExpenses, 0);
+      let taxSelf = 0;
+      if (selfProfit > 0) {
+        const remainingBasic = Math.max(0, 50270 - paye);
+        const basicTax = Math.min(selfProfit, remainingBasic) * 0.2;
+        const higherTax = Math.max(selfProfit - remainingBasic, 0) * 0.4;
+        taxSelf = basicTax + higherTax;
+      }
 
-      if (totalIncome > taxFree) {
-        const taxable = totalIncome - taxFree;
-        if (taxable <= 37700) {
-          tax = taxable * basicRate;
+      const totalTax = taxPaye + taxSelf;
+
+      // NI calculations
+      let niClass1 = 0;
+      if (paye > 12570) {
+        const upperEarningsLimit = 50270;
+        if (paye <= upperEarningsLimit) {
+          niClass1 = (paye - 12570) * 0.08;
         } else {
-          tax = 37700 * basicRate + (taxable - 37700) * higherRate;
+          niClass1 = (upperEarningsLimit - 12570) * 0.08 + (paye - upperEarningsLimit) * 0.02;
         }
       }
 
-      // Class 2 NI
-      let class2 = selfProfit > 6725 ? 179.40 : 0;
+      const class2 = selfProfit > 12570 ? 179.40 : 0;
+      const class4 = selfProfit > 12570
+        ? ((Math.min(selfProfit, 50270) - 12570) * 0.09 + Math.max(selfProfit - 50270, 0) * 0.02)
+        : 0;
 
-      // Class 4 NI
-      let class4 = 0;
-      if (selfProfit > 12570) {
-        const lower = 50270;
-        const lowerRate = 0.09;
-        const upperRate = 0.02;
+      const totalNI = niClass1 + class2 + class4;
 
-        if (selfProfit <= lower) {
-          class4 = (selfProfit - 12570) * lowerRate;
-        } else {
-          class4 = (lower - 12570) * lowerRate + (selfProfit - lower) * upperRate;
-        }
-      }
+      const pension = (pensionPercent / 100) * paye;
+      const netIncome = paye + selfProfit - totalTax - totalNI - pension;
 
-      const niTotal = class2 + class4;
-      const totalTax = tax + niTotal;
-      const takeHome = totalIncome - totalTax;
-      const monthly = takeHome / 12;
-
-      document.getElementById('result').style.display = 'block';
-      document.getElementById('result').innerHTML = `
-        <strong>Total Income:</strong> ${formatMoney(totalIncome)}<br>
-        <strong>Estimated Income Tax:</strong> ${formatMoney(tax)}<br>
-        <strong>National Insurance (Class 2 + 4):</strong> ${formatMoney(niTotal)}<br>
-        <strong>Total Tax & NI:</strong> ${formatMoney(totalTax)}<br>
-        <strong>Estimated Take-Home Pay:</strong> ${formatMoney(takeHome)}<br>
-        <strong>Estimated Monthly Income:</strong> ${formatMoney(monthly)}
+      document.getElementById('output').innerHTML = `
+        <strong>Total Income:</strong> £${(paye + selfProfit).toLocaleString()}<br>
+        <strong>Estimated Income Tax:</strong> £${totalTax.toFixed(0).toLocaleString()}<br>
+        <strong>National Insurance (Class 1 + 2 + 4):</strong> £${totalNI.toFixed(0).toLocaleString()}<br>
+        <strong>Pension Contribution:</strong> £${pension.toFixed(0).toLocaleString()}<br>
+        <strong>Total Tax, NI & Pension:</strong> £${(totalTax + totalNI + pension).toFixed(0).toLocaleString()}<br>
+        <strong>Estimated Take-Home Pay:</strong> £${netIncome.toFixed(0).toLocaleString()}<br>
+        <strong>Estimated Monthly Income:</strong> £${(netIncome / 12).toFixed(2).toLocaleString()}
       `;
     }
-
-    // ENTER key support
-    document.addEventListener("keydown", function(event) {
-      if (event.key === "Enter") {
-        calculateTax();
-      }
-    });
   </script>
-
-  <div class="note">
-    ⚠️ This tool provides a simplified estimate of UK tax and NI based on 2025 thresholds.<br>
-    It does not include student loans, pensions, or Scottish bands.<br>
-    Sources: 
-    <a href="https://www.gov.uk/income-tax-rates" target="_blank">HMRC Income Tax</a>, 
-    <a href="https://www.gov.uk/self-employed-national-insurance-rates" target="_blank">HMRC National Insurance</a>.
-  </div>
 </body>
 </html>
